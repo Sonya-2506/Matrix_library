@@ -1,0 +1,143 @@
+# Сумма матриц
+def add(m1, m2):
+    if len(m1) != len(m2):
+        return None
+    a1 = 0
+    a2 = 0
+    for i in range(len(m1)-1):
+        a1 = len(m1[i])
+        a2 = len(m1[i+1])
+        if a1 != a2 :
+            return None
+    for i in range(len(m2)-1):
+        a1 = len(m1[i])
+        a2 = len(m1[i+1])
+        if a1 != a2 :
+            return None
+    if len(m1[0]) != len(m2[0]):
+        return None
+    m3 = []
+    for i in range(len(m1)):
+        m3.append([])
+        for j in range(len(m1[0])):
+            m3[i].append(m1[i][j] + m2[i][j])
+    
+    return m3
+
+
+# Произведение матриц
+def multiply(m1, m2):
+    if len(m1) != len(m2):
+        return None
+    a1 = 0
+    a2 = 0
+    for i in range(len(m1)-1):
+        a1 = len(m1[i])
+        a2 = len(m1[i+1])
+        if a1 != a2 :
+            return None
+    for i in range(len(m2)-1):
+        a1 = len(m1[i])
+        a2 = len(m1[i+1])
+        if a1 != a2 :
+            return None
+    if len(m1[0]) != len(m2[0]):
+        return None
+    m3 = [[0 for _ in range(len(m1))] for _ in range(len(m1))]
+    for i in range(len(m1)):
+        for j in range(len(m1)):
+            for k in range(len(m1)):
+                m3[i][j] += m1[i][k] * m2[k][j]
+    
+    return m3
+
+# Умножение матрицы на вектор
+def vector_multiply(m1, v):
+    if len(m1[0]) != len(v):
+        return None
+    m2 = [0] * len(m1)
+    for i in range(len(m1)):
+        for j in range(len(m1[0])):
+            m2[i] += m1[i][j] * v[j]
+
+    return m2
+
+# Определитель
+def determinant(m):
+    a1 = 0
+    a2 = 0
+    for i in range(len(m)-1):
+        a1 = len(m[i])
+        a2 = len(m[i+1])
+        if a1 != a2 :
+            return None
+    n = len(m)
+    if n == 1:
+        return m[0][0]
+    if n == 2:
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0]
+    det = 0
+    for i in range(n):
+        minor = [j[:i] + j[i+1:] for j in m[1:]]
+        det += (-1) ** i * m[0][i] * determinant(minor)
+    return det
+
+# Алгебраические дополнения
+def adjugate(m):
+    a1 = 0
+    a2 = 0
+    for i in range(len(m)-1):
+        a1 = len(m[i])
+        a2 = len(m[i+1])
+        if a1 != a2 :
+            return None
+    n = len(m)
+    adj = [[0] * n for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            minor = [row[:j] + row[j+1:] for row in (m[:i] + m[i+1:])]
+            if len(minor) == 1:
+                det = minor[0][0]
+            elif len(minor) == 2:
+                det = minor[0][0] * minor[1][1] - minor[0][1] * minor[1][0]
+            else:
+                det = 0
+                for k in range(len(minor)):
+                    sub_minor = [row[1:] for row in (minor[:k] + minor[k+1:])]
+                    det += ((-1) ** k) * minor[k][0] * (sub_minor[0][0] if len(sub_minor) == 1 else 
+                            sub_minor[0][0] * sub_minor[1][1] - sub_minor[0][1] * sub_minor[1][0])
+            adj[j][i] = ((-1) ** (i + j)) * det 
+    
+    return adj
+
+
+
+# A в минус первой степени
+def inverse(m):
+    a1 = 0
+    a2 = 0
+    for i in range(len(m)-1):
+        a1 = len(m[i])
+        a2 = len(m[i+1])
+        if a1 != a2 :
+            return None
+    det = determinant(m)
+    a = 1/det
+    m1 = adjugate(m)
+    for i in range(len(m1)):
+        for j in range(len(m1[i])):
+            m1[i][j] *= a
+    return m1
+
+# A*x=b, где A - невырожденная матрица
+def equation(A, b):
+    a1 = 0
+    a2 = 0
+    for i in range(len(A)-1):
+        a1 = len(A[i])
+        a2 = len(A[i+1])
+        if a1 != a2 :
+            return None
+    aa = inverse(A)
+    m = vector_multiply(aa, b)
+    return m
